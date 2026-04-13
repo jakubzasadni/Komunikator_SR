@@ -19,39 +19,39 @@ Zajęcia odbywają się co 2 tygodnie. Poniżej harmonogram iteracji wraz z cela
 
 ---
 
-## Iteracja 2 — Szkielet projektu i środowisko
+## Iteracja 2 — Szkielet projektu i środowisko ✅
 **Termin:** Zajęcia 2
 
 ### Cele
-- [ ] Struktura katalogów backend i frontend
-- [ ] Docker Compose: Flask + PostgreSQL + React
-- [ ] Modele bazy danych: `User`, `Room`, `Message`
-- [ ] Migracje bazy danych (Flask-Migrate)
-- [ ] Działający `docker-compose up`
+- [x] Struktura katalogów backend i frontend
+- [x] Docker Compose: Flask + PostgreSQL + React
+- [x] Modele bazy danych: `User`, `Room`, `RoomMember`, `Message`
+- [x] Migracje bazy danych (Flask-Migrate + `entrypoint.sh`)
+- [x] Działający `docker-compose up`
 
 ### Kryteria akceptacji
-- Kontenery uruchamiają się bez błędów
-- Połączenie z bazą danych potwierdzone
-- Modele widoczne w PostgreSQL po migracji
+- Kontenery uruchamiają się bez błędów ✅
+- Połączenie z bazą danych potwierdzone ✅
+- Modele widoczne w PostgreSQL po migracji ✅
 
 ---
 
-## Iteracja 3 — Autentykacja użytkownika
+## Iteracja 3 — Autentykacja użytkownika ✅
 **Termin:** Zajęcia 3
 
 ### Cele
-- [ ] Endpoint `POST /auth/register` — rejestracja
-- [ ] Endpoint `POST /auth/login` — logowanie + JWT
-- [ ] Endpoint `POST /auth/logout` — wylogowanie
-- [ ] Hashowanie haseł (bcrypt)
-- [ ] Formularz logowania i rejestracji w React
-- [ ] Przechowywanie JWT w `localStorage` / `httpOnly cookie`
+- [x] Endpoint `POST /api/auth/register` — rejestracja z walidacją unikalności email i username
+- [x] Endpoint `POST /api/auth/login` — logowanie + JWT
+- [x] Endpoint `POST /api/auth/logout` — wylogowanie
+- [x] Hashowanie haseł (bcrypt)
+- [x] Formularz logowania i rejestracji w React (z obsługą błędów)
+- [x] Przechowywanie JWT w `localStorage`
 
 ### Kryteria akceptacji
-- Rejestracja tworzy użytkownika w DB
-- Login zwraca token JWT
-- Chronione endpointy odrzucają requesty bez tokena
-- Testy w Postmanie przechodzą
+- Rejestracja tworzy użytkownika w DB ✅
+- Login zwraca token JWT ✅
+- Chronione endpointy odrzucają requesty bez tokena ✅
+- Walidacja pól i czytelne komunikaty błędów ✅
 
 ---
 

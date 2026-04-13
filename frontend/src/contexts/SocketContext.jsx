@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./AuthContext";
 
@@ -6,26 +6,33 @@ const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
   const { token } = useAuth();
-  const socketRef = useRef(null);
+  const [socket, setSocket] = useState(null);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     if (!token) return;
 
-    const socket = io("/", { query: { token } });
-    socketRef.current = socket;
+    const s = io("/", {
+      query: { token },
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
 
-    socket.on("connect", () => setConnected(true));
-    socket.on("disconnect", () => setConnected(false));
+    s.on("connect", () => setConnected(true));
+    s.on("disconnect", () => setConnected(false));
+    s.on("connect_error", (err) => console.error("Socket error:", err.message));
+
+    setSocket(s);
 
     return () => {
-      socket.disconnect();
-      socketRef.current = null;
+      s.disconnect();
+      setSocket(null);
+      setConnected(false);
     };
   }, [token]);
 
   return (
-    <SocketContext.Provider value={{ socket: socketRef.current, connected }}>
+    <SocketContext.Provider value={{ socket, connected }}>
       {children}
     </SocketContext.Provider>
   );
