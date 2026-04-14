@@ -1,9 +1,3 @@
-# Plan semestralny — Komunikator SR
-
-Zajęcia odbywają się co 2 tygodnie. Poniżej harmonogram iteracji wraz z celami, założeniami i kryteriami akceptacji.
-
----
-
 ## Iteracja 1 — Kick-off i setup projektu
 **Termin:** Zajęcia 1 (prezentacja wstępna — zrealizowane)
 
