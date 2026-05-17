@@ -19,18 +19,21 @@ title Komunikator SR — Diagram Przypadków Użycia
 
 actor "Gość\n(niezalogowany)" as Guest #LightGray
 actor "Użytkownik\n(zalogowany)" as User #5DADE2
-actor "PostgreSQL\n(Baza Danych)" as DB #90EE90
-actor "Socket.IO\n(Serwer WS)" as WS #FFB347
+actor "Właściciel\nPokoju" as Owner #85C1E9
+actor "PostgreSQL" as DB #90EE90
+actor "Socket.IO\nSerwer WS" as WS #FFB347
+
+User <|-- Owner : extends
 
 ' ─────────────────────────────────────────────
 ' MODUŁ: AUTENTYKACJA
 ' ─────────────────────────────────────────────
 
 package "Autentykacja" {
-    usecase "UC01\nRejestracja konta" as UC01
-    usecase "UC02\nLogowanie" as UC02
+    usecase "UC01\nRejestracja konta\n[username, email, hasło]" as UC01
+    usecase "UC02\nLogowanie\n[email, hasło → JWT]" as UC02
     usecase "UC03\nWylogowanie" as UC03
-    usecase "UC04\nWalidacja tokenu JWT" as UC04
+    usecase "UC04\nWalidacja tokenu JWT\n[Bearer token]" as UC04
 }
 
 ' ─────────────────────────────────────────────
@@ -39,23 +42,34 @@ package "Autentykacja" {
 
 package "Czat Prywatny (1:1)" {
     usecase "UC05\nWysłanie wiadomości\nprywatnej" as UC05
-    usecase "UC06\nOdbiór wiadomości\nprywatnej" as UC06
+    usecase "UC06\nOdbiór wiadomości\nprywatnej (real-time)" as UC06
     usecase "UC07\nPrzeglądanie historii\nrozmowy" as UC07
-    usecase "UC08\nPowiadomienie\n\"pisze...\"" as UC08
+    usecase "UC08\nWysyłanie sygnału\n\"pisze...\"" as UC08
     usecase "UC09\nPotwierdzenie\ndostarczenia (ACK)" as UC09
 }
 
 ' ─────────────────────────────────────────────
-' MODUŁ: POKOJE GRUPOWE
+' MODUŁ: POKOJE GRUPOWE — UŻYTKOWNIK
 ' ─────────────────────────────────────────────
 
-package "Pokoje Grupowe" {
-    usecase "UC10\nUtworzenie pokoju" as UC10
+package "Pokoje Grupowe — Uczestnik" {
+    usecase "UC10\nPrzeglądanie listy\ndostępnych pokojów" as UC10
     usecase "UC11\nDołączenie do pokoju" as UC11
     usecase "UC12\nWysłanie wiadomości\ndo pokoju" as UC12
-    usecase "UC13\nOdbiór wiadomości\npokojowej" as UC13
+    usecase "UC13\nOdbiór wiadomości\npokojowej (broadcast)" as UC13
     usecase "UC14\nPrzeglądanie historii\npokoju" as UC14
-    usecase "UC15\nOpuszczenie pokoju\n(Socket.IO room)" as UC15
+    usecase "UC15\nOpuszczenie pokoju" as UC15
+}
+
+' ─────────────────────────────────────────────
+' MODUŁ: POKOJE GRUPOWE — WŁAŚCICIEL
+' ─────────────────────────────────────────────
+
+package "Zarządzanie Pokojem — Właściciel" {
+    usecase "UC16\nUtworzenie pokoju\n[nazwa]" as UC16
+    usecase "UC17\nDodanie osoby\ndo pokoju" as UC17
+    usecase "UC18\nUsunięcie osoby\nz pokoju" as UC18
+    usecase "UC19\nZamknięcie pokoju\n[usuwa pokój i historię]" as UC19
 }
 
 ' ─────────────────────────────────────────────
@@ -63,9 +77,9 @@ package "Pokoje Grupowe" {
 ' ─────────────────────────────────────────────
 
 package "Obecność i Kontakty" {
-    usecase "UC16\nPrzeglądanie listy\nużytkowników" as UC16
-    usecase "UC17\nPodgląd statusu\nonline/offline" as UC17
-    usecase "UC18\nPowiadomienie o zmianie\nstatusu (broadcast)" as UC18
+    usecase "UC20\nPrzeglądanie listy\nużytkowników" as UC20
+    usecase "UC21\nPodgląd statusu\nonline / offline" as UC21
+    usecase "UC22\nPowiadomienie\no zmianie statusu\n(broadcast)" as UC22
 }
 
 ' ─────────────────────────────────────────────
@@ -90,8 +104,17 @@ User --> UC12
 User --> UC13
 User --> UC14
 User --> UC15
-User --> UC16
-User --> UC17
+User --> UC20
+User --> UC21
+
+' ─────────────────────────────────────────────
+' RELACJE: WŁAŚCICIEL POKOJU
+' ─────────────────────────────────────────────
+
+Owner --> UC16
+Owner --> UC17
+Owner --> UC18
+Owner --> UC19
 
 ' ─────────────────────────────────────────────
 ' RELACJE: SYSTEMY ZEWNĘTRZNE
@@ -100,47 +123,50 @@ User --> UC17
 DB --> UC01 : <<persists>>
 DB --> UC02 : <<verifies>>
 DB --> UC07 : <<persists>>
+DB --> UC14 : <<persists>>
 DB --> UC05 : <<persists>>
 DB --> UC12 : <<persists>>
-DB --> UC14 : <<persists>>
+DB --> UC16 : <<persists>>
 
-WS --> UC06 : <<delivers>>
-WS --> UC09 : <<confirms>>
-WS --> UC13 : <<broadcasts>>
-WS --> UC18 : <<broadcasts>>
+WS --> UC06  : <<delivers>>
+WS --> UC09  : <<confirms>>
+WS --> UC13  : <<broadcasts>>
+WS --> UC22  : <<broadcasts>>
 
 ' ─────────────────────────────────────────────
 ' INCLUDE / EXTEND
 ' ─────────────────────────────────────────────
 
 UC02 ..> UC04 : <<include>>
+UC03 ..> UC04 : <<include>>
 UC05 ..> UC04 : <<include>>
 UC10 ..> UC04 : <<include>>
 UC11 ..> UC04 : <<include>>
 UC12 ..> UC04 : <<include>>
 UC16 ..> UC04 : <<include>>
+UC17 ..> UC04 : <<include>>
+UC18 ..> UC04 : <<include>>
+UC19 ..> UC04 : <<include>>
+UC20 ..> UC04 : <<include>>
 
 UC05 ..> UC09 : <<extend>>\n[odbiorca online]
-UC18 ..> UC17 : <<extend>>\n[przy connect/disconnect]
-
-UC11 ..> UC10 : <<extend>>\n[nowy pokój]
+UC22 ..> UC21 : <<extend>>\n[przy connect/disconnect]
+UC17 ..> UC11 : <<extend>>\n[dodana osoba\nautomatycznie dołącza]
+UC11 ..> UC16 : <<extend>>\n[nowy pokój]
 
 note right of UC04
   Każdy chroniony endpoint
   wymaga ważnego tokenu JWT
-  w nagłówku Authorization
+  w nagłówku: Authorization: Bearer
 end note
 
-note bottom of UC09
-  Server ustawia
-  Message.delivered = True
-  i emituje ACK do nadawcy
+note right of UC17
+  Właściciel zaprasza\ninnego użytkownika —
+  tworzy wpis RoomMember
 end note
 
-note bottom of UC18
-  Broadcast do WSZYSTKICH
-  połączonych klientów
-  przy każdej zmianie statusu
+note right of UC19
+  Zamknięcie pokoju:\n- usuwa Room z DB\n- cascade: usuwa RoomMember\n- cascade: usuwa Message
 end note
 
 @enduml

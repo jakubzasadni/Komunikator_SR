@@ -9,65 +9,90 @@ skinparam classHeaderFontColor #FFFFFF
 skinparam packageBackgroundColor #F2F3F4
 skinparam packageBorderColor #85929E
 skinparam arrowColor #2C3E50
-skinparam stereotypeCBackgroundColor #AED6F1
-skinparam stereotypeABackgroundColor #A9DFBF
 
-title Komunikator SR — Diagram Klas
+title Komunikator SR — Diagram Klas (Dane i Funkcje)
 
 ' ─────────────────────────────────────────────
 ' PACKAGE: MODELE DANYCH
 ' ─────────────────────────────────────────────
 
-package "Modele Danych (SQLAlchemy)" {
+package "Modele Danych (SQLAlchemy ORM)" {
 
     class User <<Model>> {
-        + id: Integer <<PK>>
-        + username: String(64) <<UNIQUE, NOT NULL>>
-        + email: String(120) <<UNIQUE, NOT NULL>>
-        + password_hash: String(128) <<NOT NULL>>
-        + created_at: DateTime
-        --
-        + to_dict() : dict
+        ' DANE
+        + id : Integer <<PK, AUTO>>
+        + username : String(64) <<UNIQUE, NOT NULL>>
+        + email : String(120) <<UNIQUE, NOT NULL>>
+        + password_hash : String(128) <<NOT NULL>>
+        + created_at : DateTime <<DEFAULT: utcnow>>
+        ==
+        ' FUNKCJE
+        + register(username, email, password) : User
+        + login(email, password) : str (JWT)
+        + logout() : void
+        + set_password(password) : void
+        + check_password(password) : bool
+        + to_dict(online: bool) : dict
     }
 
     class Room <<Model>> {
-        + id: Integer <<PK>>
-        + name: String(128) <<NOT NULL>>
-        + created_by: Integer <<FK: users.id>>
-        + created_at: DateTime
-        --
+        ' DANE
+        + id : Integer <<PK, AUTO>>
+        + name : String(128) <<NOT NULL>>
+        + created_by : Integer <<FK: users.id, NOT NULL>>
+        + created_at : DateTime <<DEFAULT: utcnow>>
+        ==
+        ' FUNKCJE
+        + create(name, owner_id) : Room
+        + close() : void
+        + add_member(user_id) : RoomMember
+        + remove_member(user_id) : void
+        + get_members() : list[User]
+        + send_message(sender_id, content) : Message
+        + get_history(limit) : list[Message]
         + to_dict() : dict
     }
 
     class RoomMember <<Model>> {
-        + id: Integer <<PK>>
-        + room_id: Integer <<FK: rooms.id>>
-        + user_id: Integer <<FK: users.id>>
-        + joined_at: DateTime
-        --
+        ' DANE
+        + id : Integer <<PK, AUTO>>
+        + room_id : Integer <<FK: rooms.id, NOT NULL>>
+        + user_id : Integer <<FK: users.id, NOT NULL>>
+        + joined_at : DateTime <<DEFAULT: utcnow>>
+        ==
+        ' FUNKCJE
+        + join(room_id, user_id) : RoomMember
+        + leave() : void
+        + is_member(room_id, user_id) : bool
+        ==
         <<UNIQUE(room_id, user_id)>>
     }
 
     class Message <<Model>> {
-        + id: Integer <<PK>>
-        + sender_id: Integer <<FK: users.id, NOT NULL>>
-        + recipient_id: Integer <<FK: users.id, NULLABLE>>
-        + room_id: Integer <<FK: rooms.id, NULLABLE>>
-        + content: Text <<NOT NULL>>
-        + delivered: Boolean <<DEFAULT: False>>
-        + created_at: DateTime
-        --
+        ' DANE
+        + id : Integer <<PK, AUTO>>
+        + sender_id : Integer <<FK: users.id, NOT NULL>>
+        + recipient_id : Integer <<FK: users.id, NULLABLE>>
+        + room_id : Integer <<FK: rooms.id, NULLABLE>>
+        + content : Text <<NOT NULL>>
+        + delivered : Boolean <<DEFAULT: False>>
+        + created_at : DateTime <<DEFAULT: utcnow>>
+        ==
+        ' FUNKCJE
+        + send_private(sender_id, recipient_id, content) : Message
+        + send_to_room(sender_id, room_id, content) : Message
+        + mark_delivered() : void
         + to_dict() : dict
-        -- constraints --
-        [recipient_id XOR room_id must be set]
+        ==
+        ' Reguła: recipient_id XOR room_id musi być ustawione
     }
 
-    User "1" --o{ "0..*" Message : "sends >"
-    User "1" --o{ "0..*" Message : "< receives"
-    User "1" --o{ "0..*" RoomMember : "joins >"
-    Room "1" --o{ "0..*" RoomMember : "< has members"
-    Room "1" --o{ "0..*" Message : "< contains"
-    User "1" --o{ "0..*" Room : "creates >"
+    User "1" --o{ "0..*" Message : "nadaje >"
+    User "1" --o{ "0..*" Message : "< odbiera"
+    User "1" --o{ "0..*" RoomMember : "należy do >"
+    User "1" --o{ "0..*" Room : "tworzy >"
+    Room "1" --o{ "0..*" RoomMember : "< posiada"
+    Room "1" --o{ "0..*" Message : "< zawiera"
 }
 
 ' ─────────────────────────────────────────────
@@ -77,22 +102,21 @@ package "Modele Danych (SQLAlchemy)" {
 package "Session Management" {
 
     class SessionStore <<Singleton>> {
-        - _sessions: dict[int, set[str]]
-        - _lock: threading.Lock
-        --
+        ' DANE (in-memory)
+        - _sessions : dict[int, set[str]]
+        - _lock : threading.Lock
+        ==
+        ' FUNKCJE
         + add_session(user_id: int, socket_id: str) : void
         + remove_session(user_id: int, socket_id: str) : void
         + get_socket_ids(user_id: int) : set[str]
         + get_user_id_by_socket(socket_id: str) : int | None
         + get_online_user_ids() : set[int]
         + is_online(user_id: int) : bool
+        ==
+        ' user_id → {socket_id_1, socket_id_2, ...}
+        ' Obsługa wielu kart / urządzeń jednocześnie
     }
-
-    note right of SessionStore
-        In-memory store
-        user_id → {socket_id, socket_id, ...}
-        Wspiera multi-tab / multi-device
-    end note
 }
 
 ' ─────────────────────────────────────────────
@@ -101,103 +125,118 @@ package "Session Management" {
 
 package "REST API (Flask Blueprints)" {
 
-    class AuthRoutes <<Blueprint>> {
-        + POST /api/auth/register(username, email, password) : 201 | 400 | 409
-        + POST /api/auth/login(email, password) : 200 | 401
-        + POST /api/auth/logout() : 200
+    class AuthController <<Blueprint: /api/auth>> {
+        ==
+        + POST /register(username, email, password)\n  → 201 {user_id} | 400 | 409
+        + POST /login(email, password)\n  → 200 {access_token, user} | 401
+        + POST /logout()\n  → 200
     }
 
-    class UserRoutes <<Blueprint>> {
-        + GET /api/users/ [JWT] : User[]
+    class UserController <<Blueprint: /api/users>> {
+        ==
+        + GET /  [JWT]\n  → 200 [{id, username, online}]
     }
 
-    class RoomRoutes <<Blueprint>> {
-        + GET /api/rooms/ [JWT] : Room[]
-        + POST /api/rooms/ [JWT] : Room
-        + POST /api/rooms/{id}/join [JWT] : Room
+    class RoomController <<Blueprint: /api/rooms>> {
+        ==
+        + GET /  [JWT]\n  → 200 [Room]
+        + POST /  [JWT] (name)\n  → 201 Room
+        + POST /{id}/join  [JWT]\n  → 200 Room | 404
+        + POST /{id}/invite  [JWT] (user_id)  [Owner]\n  → 200 | 403 | 404
+        + DELETE /{id}/members/{uid}  [JWT]  [Owner]\n  → 200 | 403 | 404
+        + DELETE /{id}  [JWT]  [Owner]\n  → 200 | 403 | 404
+        + GET /{id}/messages  [JWT]\n  → 200 [Message] | 403
     }
 
-    class MessageRoutes <<Blueprint>> {
-        + GET /api/messages/{user_id} [JWT] : Message[]
-        + GET /api/rooms/{id}/messages [JWT] : Message[]
+    class MessageController <<Blueprint: /api/messages>> {
+        ==
+        + GET /{user_id}  [JWT]\n  → 200 [Message]
     }
 
-    AuthRoutes ..> User : uses
-    UserRoutes ..> User : queries
-    UserRoutes ..> SessionStore : checks online
-    RoomRoutes ..> Room : CRUD
-    RoomRoutes ..> RoomMember : CRUD
-    MessageRoutes ..> Message : queries
-    MessageRoutes ..> RoomMember : validates membership
+    AuthController    ..> User        : uses
+    UserController    ..> User        : queries
+    UserController    ..> SessionStore : checks online
+    RoomController    ..> Room        : CRUD
+    RoomController    ..> RoomMember  : CRUD
+    MessageController ..> Message     : queries
+    MessageController ..> RoomMember  : validates
 }
 
 ' ─────────────────────────────────────────────
-' PACKAGE: WEBSOCKET EVENTS
+' PACKAGE: WEBSOCKET
 ' ─────────────────────────────────────────────
 
-package "WebSocket (Flask-SocketIO Events)" {
+package "WebSocket (Flask-SocketIO)" {
 
-    class SocketEvents <<EventHandler>> {
-        -- Client → Server --
-        + on_connect(token: str) : bool
+    class SocketEvents <<EventHandlers>> {
+        ' DANE
+        - session_store : SessionStore
+        ==
+        ' FUNKCJE — Klient → Serwer
+        + on_connect(token) : bool
         + on_disconnect() : void
         + on_private_message(to_user_id, content) : void
         + on_room_message(room_id, content) : void
         + on_join_room(room_id) : void
         + on_leave_room(room_id) : void
         + on_typing(to_user_id) : void
-        -- Server → Client events --
-        emit "connect" : user authenticated
-        emit "disconnect" : session removed
-        emit "message" : private message delivered
-        emit "room_message" : room broadcast
-        emit "user_status" : {user_id, online}
-        emit "ack" : {message_id}
-        emit "typing" : {from_user_id}
-        emit "error" : {message}
+        ==
+        ' ZDARZENIA — Serwer → Klient
+        emit "message"      : {id, sender_id, content, ...}
+        emit "room_message" : {id, room_id, sender_id, ...}
+        emit "user_status"  : {user_id, online}
+        emit "ack"          : {message_id}
+        emit "typing"       : {from_user_id}
+        emit "error"        : {message}
     }
 
-    SocketEvents ..> SessionStore : manages sessions
-    SocketEvents ..> Message : persists
-    SocketEvents ..> RoomMember : validates
+    SocketEvents ..> SessionStore : manages
+    SocketEvents ..> Message      : persists
+    SocketEvents ..> RoomMember   : validates
 }
 
 ' ─────────────────────────────────────────────
-' PACKAGE: FRONTEND SERVICES
+' PACKAGE: FRONTEND
 ' ─────────────────────────────────────────────
 
 package "Frontend (React)" {
 
     class AuthContext <<Context>> {
-        + token: string | null
-        + user: {id, username} | null
-        --
+        ' DANE
+        + token : string | null
+        + user : {id, username} | null
+        ==
+        ' FUNKCJE
         + login(email, password) : Promise
         + logout() : void
         + register(username, email, password) : Promise
     }
 
     class SocketContext <<Context>> {
-        + socket: Socket | null
-        + connected: boolean
-        --
-        + connect(token: string) : void
+        ' DANE
+        + socket : Socket | null
+        + connected : boolean
+        ==
+        ' FUNKCJE
+        + connect(token) : void
         + disconnect() : void
-        + on(event, handler) : void
         + emit(event, data) : void
+        + on(event, handler) : void
     }
 
-    class ApiService <<Service>> {
-        - axiosInstance: AxiosInstance
-        - baseURL: "http://localhost:5000/api"
-        --
-        + setAuthHeader(token: string) : void
+    class ApiService <<Axios>> {
+        ' DANE
+        - baseURL : "/api"
+        - authHeader : "Bearer <token>"
+        ==
+        ' FUNKCJE
         + get(url) : Promise
         + post(url, data) : Promise
+        + delete(url) : Promise
     }
 
-    AuthContext ..> ApiService : uses
-    SocketContext ..> AuthContext : reads token
+    AuthContext  ..> ApiService    : uses
+    SocketContext ..> AuthContext  : reads token
 }
 
 @enduml
