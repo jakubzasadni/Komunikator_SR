@@ -1,0 +1,96 @@
+@startuml Komunikator_SR - Sequence: Login & Connect
+
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam participantBackgroundColor #EBF5FB
+skinparam participantBorderColor #2980B9
+skinparam sequenceArrowColor #2C3E50
+skinparam sequenceLifeLineBorderColor #85929E
+skinparam noteBackgroundColor #FEF9E7
+skinparam noteBorderColor #F0B429
+skinparam sequenceGroupBackgroundColor #F2F3F4
+
+title Komunikator SR — Sekwencja: Logowanie i Nawiązanie Połączenia
+
+actor Użytkownik as U
+participant "React\nFrontend" as FE
+participant "Flask\nBackend\n:5000" as BE
+participant "SessionStore\n(in-memory)" as SS
+database "PostgreSQL" as DB
+
+== Logowanie ==
+
+U -> FE: Wprowadza email + hasło\nKlika "Zaloguj"
+activate FE
+
+FE -> BE: POST /api/auth/login\n{ email, password }
+activate BE
+
+BE -> DB: SELECT * FROM users\nWHERE email = ?
+activate DB
+DB --> BE: User record\n(id, username, password_hash)
+deactivate DB
+
+BE -> BE: bcrypt.check_password_hash\n(password_hash, password)
+alt Hasło niepoprawne
+    BE --> FE: 401 Unauthorized\n{ "error": "Invalid credentials" }
+    FE --> U: Wyświetla komunikat błędu
+else Hasło poprawne
+    BE -> BE: jwt.encode({ sub: user.id })
+    BE --> FE: 200 OK\n{ access_token, user: {id, username} }
+    deactivate BE
+
+    FE -> FE: localStorage.setItem\n("token", access_token)
+    FE -> FE: AuthContext.setUser()
+end
+
+== Nawiązanie połączenia WebSocket ==
+
+FE -> BE: Socket.IO CONNECT\n?token=<JWT>
+activate BE
+
+BE -> BE: jwt.decode(token)\nextract user_id from "sub"
+alt Token nieprawidłowy
+    BE --> FE: return False\n(połączenie odrzucone)
+    FE --> U: "Błąd połączenia"
+else Token poprawny
+    BE -> SS: add_session(user_id, request.sid)
+    activate SS
+    SS --> BE: OK
+    deactivate SS
+
+    BE --> FE: EVENT: connected
+
+    BE ->> FE: broadcast EVENT: user_status\n{ user_id: X, online: true }
+    note right: Wysyłane do WSZYSTKICH\npołączonych klientów
+    deactivate BE
+end
+
+== Ładowanie danych startowych ==
+
+FE -> BE: GET /api/users/\nAuthorization: Bearer <JWT>
+activate BE
+BE -> DB: SELECT users.*
+activate DB
+DB --> BE: users[]
+deactivate DB
+BE -> SS: get_online_user_ids()
+activate SS
+SS --> BE: {user_id_set}
+deactivate SS
+BE --> FE: 200 OK\n[{id, username, online: bool}]
+deactivate BE
+
+FE -> BE: GET /api/rooms/\nAuthorization: Bearer <JWT>
+activate BE
+BE -> DB: SELECT rooms WHERE user is member
+activate DB
+DB --> BE: rooms[]
+deactivate DB
+BE --> FE: 200 OK\n[{id, name, created_by}]
+deactivate BE
+
+FE --> U: Wyświetla czat\nz listą kontaktów i pokojów
+deactivate FE
+
+@enduml

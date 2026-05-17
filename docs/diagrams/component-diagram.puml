@@ -1,0 +1,188 @@
+@startuml Komunikator_SR - Component & Deployment Diagram
+
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam nodeBackgroundColor #EBF5FB
+skinparam nodeBorderColor #2980B9
+skinparam componentBackgroundColor #D5E8D4
+skinparam componentBorderColor #82B366
+skinparam databaseBackgroundColor #FFF2CC
+skinparam databaseBorderColor #D6B656
+skinparam interfaceBackgroundColor #F8CECC
+skinparam interfaceBorderColor #B85450
+skinparam arrowColor #2C3E50
+skinparam packageBackgroundColor #F2F3F4
+skinparam packageBorderColor #85929E
+
+title Komunikator SR — Diagram Komponentów i Wdrożenia
+
+' ─────────────────────────────────────────────
+' DOCKER HOST
+' ─────────────────────────────────────────────
+
+node "Docker Host" {
+
+    ' ─────────────────────────────────────────
+    ' KONTENER: FRONTEND
+    ' ─────────────────────────────────────────
+    node "Container: frontend\nnode:20-alpine\nport: 5173" as FE_CONTAINER {
+
+        package "React SPA (Vite)" {
+            component [App.jsx\n(Router)] as App
+            component [LoginPage] as Login
+            component [RegisterPage] as Register
+            component [ChatPage] as Chat
+            component [AuthContext\n(JWT state)] as AuthCtx
+            component [SocketContext\n(WS state)] as SockCtx
+            component [api.js\n(Axios)] as Api
+
+            App --> Login
+            App --> Register
+            App --> Chat
+            Chat --> AuthCtx
+            Chat --> SockCtx
+            Login --> Api
+            Register --> Api
+            AuthCtx --> Api
+        }
+
+        interface "HTTP :80\n(Browser)" as BrowserHTTP
+        interface "WS\n(Socket.IO Client)" as WsClient
+
+        BrowserHTTP --> App
+    }
+
+    ' ─────────────────────────────────────────
+    ' KONTENER: BACKEND
+    ' ─────────────────────────────────────────
+    node "Container: backend\npython:3.12-slim\nport: 5000" as BE_CONTAINER {
+
+        package "Flask Application" {
+
+            package "REST API Blueprints" {
+                component [AuthRoutes\n/api/auth/*] as AuthBP
+                component [UserRoutes\n/api/users/*] as UserBP
+                component [RoomRoutes\n/api/rooms/*] as RoomBP
+                component [MessageRoutes\n/api/messages/*] as MsgBP
+            }
+
+            package "WebSocket Layer" {
+                component [SocketIO Events\n(events.py)] as Events
+                component [SessionStore\n(in-memory)] as SessionStore
+            }
+
+            package "Data Models (SQLAlchemy)" {
+                component [User] as UserModel
+                component [Room] as RoomModel
+                component [RoomMember] as MemberModel
+                component [Message] as MessageModel
+            }
+
+            component [Flask-JWT-Extended\n(Auth Middleware)] as JWT
+            component [Flask-Bcrypt\n(Password Hash)] as Bcrypt
+            component [Flask-Migrate\n(Alembic)] as Migrate
+
+            AuthBP --> JWT
+            AuthBP --> Bcrypt
+            AuthBP --> UserModel
+            UserBP --> JWT
+            UserBP --> UserModel
+            UserBP --> SessionStore
+            RoomBP --> JWT
+            RoomBP --> RoomModel
+            RoomBP --> MemberModel
+            MsgBP --> JWT
+            MsgBP --> MessageModel
+            MsgBP --> MemberModel
+
+            Events --> SessionStore
+            Events --> UserModel
+            Events --> MessageModel
+            Events --> MemberModel
+            Events --> JWT
+
+            UserModel --> Migrate
+            RoomModel --> Migrate
+            MessageModel --> Migrate
+        }
+
+        interface "HTTP REST\n:5000/api" as RestAPI
+        interface "WebSocket\n:5000 (Socket.IO)" as WsServer
+
+        RestAPI --> AuthBP
+        RestAPI --> UserBP
+        RestAPI --> RoomBP
+        RestAPI --> MsgBP
+        WsServer --> Events
+    }
+
+    ' ─────────────────────────────────────────
+    ' KONTENER: DATABASE
+    ' ─────────────────────────────────────────
+    node "Container: db\npostgres:16-alpine\nport: 5432" as DB_CONTAINER {
+
+        database "PostgreSQL\nkomunikator_db" as PG {
+            storage "users" as TUsers
+            storage "rooms" as TRooms
+            storage "room_members" as TMembers
+            storage "messages" as TMessages
+            storage "alembic_version" as TMigrations
+        }
+
+        interface "TCP :5432\n(pg protocol)" as PgConn
+
+        PgConn --> PG
+    }
+
+    ' ─────────────────────────────────────────
+    ' DOCKER VOLUME
+    ' ─────────────────────────────────────────
+    storage "Docker Volume\npgdata" as PgVolume
+
+    DB_CONTAINER ..> PgVolume : persists
+
+    ' ─────────────────────────────────────────
+    ' POŁĄCZENIA MIĘDZY KONTENERAMI
+    ' ─────────────────────────────────────────
+
+    Api --> RestAPI : HTTP/REST\n(Authorization: Bearer JWT)
+    WsClient --> WsServer : WebSocket\n(Socket.IO protocol)
+    BE_CONTAINER --> PgConn : SQLAlchemy\nDATABASE_URL
+
+    note on link
+        DATABASE_URL=
+        postgresql://komunikator:
+        komunikator@db:5432/
+        komunikator_db
+    end note
+}
+
+' ─────────────────────────────────────────────
+' KLIENT ZEWNĘTRZNY
+' ─────────────────────────────────────────────
+
+actor "Użytkownik" as EndUser
+
+node "Przeglądarka\n(Chrome/Firefox)" as Browser {
+    component [React SPA] as SPA
+}
+
+EndUser --> Browser
+Browser --> BrowserHTTP : HTTP :5173
+
+' ─────────────────────────────────────────────
+' LEGENDA
+' ─────────────────────────────────────────────
+
+legend right
+    |= Symbol |= Opis |
+    | <&circle> | Interfejs |
+    | <&layers> | Komponent |
+    | <&box> | Kontener Docker |
+    | <&spreadsheet> | Tabela DB |
+    REST: HTTP + JSON
+    WS: Socket.IO (WebSocket / polling)
+    JWT: JSON Web Token (Bearer)
+endlegend
+
+@enduml

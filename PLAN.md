@@ -145,8 +145,8 @@
 
 | Obszar | Osoba |
 |---|---|
-| Backend (Flask, Socket.IO) | Jakub Zasadni |
-| Frontend (React, UI) | Dawid Świgut |
-| Baza danych, DevOps | Krzysztof Witek |
+| Backend (Flask, Socket.IO) | Dawid Świgut |
+| Frontend (React, UI) | Krzysztof Witek |
+| Baza danych, DevOps | Jakub Zasadni |
 
 > Podział może ewoluować — wszystkie osoby uczestniczą w code review.

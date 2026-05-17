@@ -1,0 +1,203 @@
+@startuml Komunikator_SR - Class Diagram
+
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam classBackgroundColor #EBF5FB
+skinparam classBorderColor #2980B9
+skinparam classHeaderBackgroundColor #2980B9
+skinparam classHeaderFontColor #FFFFFF
+skinparam packageBackgroundColor #F2F3F4
+skinparam packageBorderColor #85929E
+skinparam arrowColor #2C3E50
+skinparam stereotypeCBackgroundColor #AED6F1
+skinparam stereotypeABackgroundColor #A9DFBF
+
+title Komunikator SR — Diagram Klas
+
+' ─────────────────────────────────────────────
+' PACKAGE: MODELE DANYCH
+' ─────────────────────────────────────────────
+
+package "Modele Danych (SQLAlchemy)" {
+
+    class User <<Model>> {
+        + id: Integer <<PK>>
+        + username: String(64) <<UNIQUE, NOT NULL>>
+        + email: String(120) <<UNIQUE, NOT NULL>>
+        + password_hash: String(128) <<NOT NULL>>
+        + created_at: DateTime
+        --
+        + to_dict() : dict
+    }
+
+    class Room <<Model>> {
+        + id: Integer <<PK>>
+        + name: String(128) <<NOT NULL>>
+        + created_by: Integer <<FK: users.id>>
+        + created_at: DateTime
+        --
+        + to_dict() : dict
+    }
+
+    class RoomMember <<Model>> {
+        + id: Integer <<PK>>
+        + room_id: Integer <<FK: rooms.id>>
+        + user_id: Integer <<FK: users.id>>
+        + joined_at: DateTime
+        --
+        <<UNIQUE(room_id, user_id)>>
+    }
+
+    class Message <<Model>> {
+        + id: Integer <<PK>>
+        + sender_id: Integer <<FK: users.id, NOT NULL>>
+        + recipient_id: Integer <<FK: users.id, NULLABLE>>
+        + room_id: Integer <<FK: rooms.id, NULLABLE>>
+        + content: Text <<NOT NULL>>
+        + delivered: Boolean <<DEFAULT: False>>
+        + created_at: DateTime
+        --
+        + to_dict() : dict
+        -- constraints --
+        [recipient_id XOR room_id must be set]
+    }
+
+    User "1" --o{ "0..*" Message : "sends >"
+    User "1" --o{ "0..*" Message : "< receives"
+    User "1" --o{ "0..*" RoomMember : "joins >"
+    Room "1" --o{ "0..*" RoomMember : "< has members"
+    Room "1" --o{ "0..*" Message : "< contains"
+    User "1" --o{ "0..*" Room : "creates >"
+}
+
+' ─────────────────────────────────────────────
+' PACKAGE: SESSION STORE
+' ─────────────────────────────────────────────
+
+package "Session Management" {
+
+    class SessionStore <<Singleton>> {
+        - _sessions: dict[int, set[str]]
+        - _lock: threading.Lock
+        --
+        + add_session(user_id: int, socket_id: str) : void
+        + remove_session(user_id: int, socket_id: str) : void
+        + get_socket_ids(user_id: int) : set[str]
+        + get_user_id_by_socket(socket_id: str) : int | None
+        + get_online_user_ids() : set[int]
+        + is_online(user_id: int) : bool
+    }
+
+    note right of SessionStore
+        In-memory store
+        user_id → {socket_id, socket_id, ...}
+        Wspiera multi-tab / multi-device
+    end note
+}
+
+' ─────────────────────────────────────────────
+' PACKAGE: REST API
+' ─────────────────────────────────────────────
+
+package "REST API (Flask Blueprints)" {
+
+    class AuthRoutes <<Blueprint>> {
+        + POST /api/auth/register(username, email, password) : 201 | 400 | 409
+        + POST /api/auth/login(email, password) : 200 | 401
+        + POST /api/auth/logout() : 200
+    }
+
+    class UserRoutes <<Blueprint>> {
+        + GET /api/users/ [JWT] : User[]
+    }
+
+    class RoomRoutes <<Blueprint>> {
+        + GET /api/rooms/ [JWT] : Room[]
+        + POST /api/rooms/ [JWT] : Room
+        + POST /api/rooms/{id}/join [JWT] : Room
+    }
+
+    class MessageRoutes <<Blueprint>> {
+        + GET /api/messages/{user_id} [JWT] : Message[]
+        + GET /api/rooms/{id}/messages [JWT] : Message[]
+    }
+
+    AuthRoutes ..> User : uses
+    UserRoutes ..> User : queries
+    UserRoutes ..> SessionStore : checks online
+    RoomRoutes ..> Room : CRUD
+    RoomRoutes ..> RoomMember : CRUD
+    MessageRoutes ..> Message : queries
+    MessageRoutes ..> RoomMember : validates membership
+}
+
+' ─────────────────────────────────────────────
+' PACKAGE: WEBSOCKET EVENTS
+' ─────────────────────────────────────────────
+
+package "WebSocket (Flask-SocketIO Events)" {
+
+    class SocketEvents <<EventHandler>> {
+        -- Client → Server --
+        + on_connect(token: str) : bool
+        + on_disconnect() : void
+        + on_private_message(to_user_id, content) : void
+        + on_room_message(room_id, content) : void
+        + on_join_room(room_id) : void
+        + on_leave_room(room_id) : void
+        + on_typing(to_user_id) : void
+        -- Server → Client events --
+        emit "connect" : user authenticated
+        emit "disconnect" : session removed
+        emit "message" : private message delivered
+        emit "room_message" : room broadcast
+        emit "user_status" : {user_id, online}
+        emit "ack" : {message_id}
+        emit "typing" : {from_user_id}
+        emit "error" : {message}
+    }
+
+    SocketEvents ..> SessionStore : manages sessions
+    SocketEvents ..> Message : persists
+    SocketEvents ..> RoomMember : validates
+}
+
+' ─────────────────────────────────────────────
+' PACKAGE: FRONTEND SERVICES
+' ─────────────────────────────────────────────
+
+package "Frontend (React)" {
+
+    class AuthContext <<Context>> {
+        + token: string | null
+        + user: {id, username} | null
+        --
+        + login(email, password) : Promise
+        + logout() : void
+        + register(username, email, password) : Promise
+    }
+
+    class SocketContext <<Context>> {
+        + socket: Socket | null
+        + connected: boolean
+        --
+        + connect(token: string) : void
+        + disconnect() : void
+        + on(event, handler) : void
+        + emit(event, data) : void
+    }
+
+    class ApiService <<Service>> {
+        - axiosInstance: AxiosInstance
+        - baseURL: "http://localhost:5000/api"
+        --
+        + setAuthHeader(token: string) : void
+        + get(url) : Promise
+        + post(url, data) : Promise
+    }
+
+    AuthContext ..> ApiService : uses
+    SocketContext ..> AuthContext : reads token
+}
+
+@enduml

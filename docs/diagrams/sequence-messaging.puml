@@ -1,0 +1,113 @@
+@startuml Komunikator_SR - Sequence: Messaging
+
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam participantBackgroundColor #EBF5FB
+skinparam participantBorderColor #2980B9
+skinparam sequenceArrowColor #2C3E50
+skinparam sequenceLifeLineBorderColor #85929E
+skinparam noteBackgroundColor #FEF9E7
+skinparam noteBorderColor #F0B429
+skinparam sequenceGroupBackgroundColor #F2F3F4
+
+title Komunikator SR — Sekwencja: Wysyłanie Wiadomości
+
+actor "Użytkownik A\n(nadawca)" as UA
+participant "Frontend A" as FEA
+participant "Flask\nBackend" as BE
+participant "SessionStore" as SS
+database "PostgreSQL" as DB
+participant "Frontend B" as FEB
+actor "Użytkownik B\n(odbiorca)" as UB
+
+== Wysłanie wiadomości prywatnej ==
+
+UA -> FEA: Wpisuje treść\ni klika "Wyślij"
+activate FEA
+
+FEA -> BE: WS emit: private_message\n{ to_user_id: B_id, content: "Cześć!" }
+activate BE
+
+BE -> SS: get_user_id_by_socket(request.sid)
+activate SS
+SS --> BE: sender_id = A_id
+deactivate SS
+
+BE -> DB: INSERT INTO messages\n(sender_id=A, recipient_id=B,\ncontent, delivered=False)
+activate DB
+DB --> BE: message { id: 42, ... }
+deactivate DB
+
+BE -> SS: get_socket_ids(B_id)
+activate SS
+SS --> BE: {socket_B_1, socket_B_2}
+deactivate SS
+
+alt Użytkownik B jest online
+    BE ->> FEB: WS emit: message\n{ id:42, sender_id:A, content:... }
+    activate FEB
+    FEB --> UB: Wyświetla wiadomość\nw oknie czatu
+    deactivate FEB
+
+    BE -> DB: UPDATE messages\nSET delivered=True WHERE id=42
+    activate DB
+    DB --> BE: OK
+    deactivate DB
+
+    BE ->> FEA: WS emit: ack\n{ message_id: 42 }
+    FEA --> UA: Ikona "dostarczone" ✓
+else Użytkownik B jest offline
+    note over BE: Message.delivered = False\npozostaje w DB\n(opcjonalne dostarczenie po reconnect)
+end
+
+deactivate BE
+deactivate FEA
+
+== Powiadomienie "pisze..." ==
+
+UA -> FEA: Zaczyna pisać (keystroke)
+activate FEA
+FEA -> BE: WS emit: typing\n{ to_user_id: B_id }
+activate BE
+BE -> SS: get_socket_ids(B_id)
+activate SS
+SS --> BE: {socket_B}
+deactivate SS
+BE ->> FEB: WS emit: typing\n{ from_user_id: A_id }
+activate FEB
+FEB --> UB: "Użytkownik A pisze..."
+deactivate FEB
+deactivate BE
+deactivate FEA
+
+== Wysłanie wiadomości do pokoju grupowego ==
+
+UA -> FEA: Wysyła wiadomość\ndo Pokoju #3
+activate FEA
+
+FEA -> BE: WS emit: room_message\n{ room_id: 3, content: "Witajcie!" }
+activate BE
+
+BE -> SS: get_user_id_by_socket(request.sid)
+activate SS
+SS --> BE: sender_id = A_id
+deactivate SS
+
+BE -> DB: INSERT INTO messages\n(sender_id=A, room_id=3, content)
+activate DB
+DB --> BE: message { id: 43, ... }
+deactivate DB
+
+BE ->> FEA: WS broadcast: room_message\n{ id:43, room_id:3, sender_id:A, content }
+note right: Broadcast do Socket.IO room "3"\nwszyscy członkowie (włącznie z nadawcą)
+BE ->> FEB: WS broadcast: room_message\n{ id:43, room_id:3, sender_id:A, content }
+
+FEA --> UA: Wyświetla wiadomość\n(własna)
+activate FEB
+FEB --> UB: Wyświetla wiadomość\n(od A)
+deactivate FEB
+
+deactivate BE
+deactivate FEA
+
+@enduml
