@@ -1,4 +1,4 @@
-@startuml Komunikator_SR - Sequence: Login & Connect
+@startuml
 
 !theme plain
 skinparam backgroundColor #FAFAFA

@@ -49,21 +49,33 @@
 
 ---
 
-## Iteracja 4 — Komunikacja WebSocket i wiadomości prywatne (PU-01)
+## Iteracja 4 — Komunikacja WebSocket i wiadomości prywatne (PU-01) ✅
 **Termin:** Zajęcia 4
 
 ### Cele
-- [ ] Integracja Flask-SocketIO z backendem
-- [ ] Zdarzenia Socket.IO: `connect`, `disconnect`, `private_message`
-- [ ] Dostarczanie wiadomości do konkretnego użytkownika (po `user_id`)
-- [ ] Obsługa wielu sesji jednego użytkownika
-- [ ] Okno czatu w React — wysyłanie i odbieranie wiadomości RT
-- [ ] Zapis wiadomości do PostgreSQL
+- [x] Integracja Flask-SocketIO z backendem (eventlet async mode)
+- [x] Zdarzenia Socket.IO: `connect`, `disconnect`, `private_message`, `typing`
+- [x] Dostarczanie wiadomości do konkretnego użytkownika (po `user_id`)
+- [x] Obsługa wielu sesji jednego użytkownika (`SessionStore`: `user_id → set(socket_ids)`)
+- [x] Okno czatu w React — wysyłanie i odbieranie wiadomości RT (`ChatPage.jsx`)
+- [x] Zapis wiadomości do PostgreSQL (tabela `messages`, kolumna `delivered`)
+- [x] Wskaźnik pisania (`typing` event, timeout 2.5 s)
+- [x] Status online/offline w sidebarze kontaktów (zielona/szara kropka)
+- [x] Historia wiadomości przy wyborze kontaktu (`GET /api/messages/<user_id>`)
+- [x] ACK dostarczenia wiadomości (`ack` event → ikona ✓ po stronie nadawcy)
 
 ### Kryteria akceptacji
-- Użytkownik A wysyła wiadomość → Użytkownik B odbiera natychmiast
-- Wiadomość zapisana w tabeli `messages`
-- Działa przy dwóch równoczesnych sesjach tego samego użytkownika
+- Użytkownik A wysyła wiadomość → Użytkownik B odbiera natychmiast ✅
+- Wiadomość zapisana w tabeli `messages` ✅
+- Działa przy dwóch równoczesnych sesjach tego samego użytkownika ✅
+
+### Zrealizowane pliki
+- `backend/app/sockets/events.py` — pełna obsługa zdarzeń WebSocket
+- `backend/app/routes/messages.py` — historia wiadomości prywatnych
+- `backend/app/routes/users.py` — lista użytkowników ze statusem online
+- `backend/app/session_store.py` — `SessionStore` (singleton, thread-safe)
+- `frontend/src/components/Chat/ChatPage.jsx` — widok czatu 1:1
+- `frontend/src/index.css` — style czatu (bąbelki, sidebar, typing indicator)
 
 ---
 

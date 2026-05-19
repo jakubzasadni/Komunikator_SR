@@ -1,4 +1,4 @@
-@startuml Komunikator_SR - Use Case Diagram
+@startuml
 
 !theme plain
 skinparam backgroundColor #FAFAFA
@@ -10,6 +10,7 @@ skinparam packageBorderColor #85C1E9
 skinparam arrowColor #2C3E50
 skinparam noteBackgroundColor #FEF9E7
 skinparam noteBorderColor #F0B429
+skinparam linetype ortho
 
 title Komunikator SR — Diagram Przypadków Użycia
 

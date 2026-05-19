@@ -1,0 +1,322 @@
+<mxfile host="65bd71144e">
+    <diagram id="11" name="Diagram Przypadków Użycia">
+        <mxGraphModel dx="1540" dy="976" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1750" pageHeight="1050" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="59" style="edgeStyle=none;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="12" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="50" y="165.33333333333326" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="12" value="Gość" style="shape=umlActor;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=11;verticalLabelPosition=bottom;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="135" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Użytkownik" style="shape=umlActor;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontStyle=1;fontSize=11;verticalLabelPosition=bottom;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="565" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Właściciel&#xa;Pokoju" style="shape=umlActor;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;fontStyle=1;fontSize=11;verticalLabelPosition=bottom;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="770" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="" style="endArrow=block;endFill=0;startArrow=none;strokeColor=#666666;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="14" target="13" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Autentykacja" style="rounded=1;arcSize=4;fillColor=#F3E5F5;strokeColor=#9C27B0;fontStyle=1;fontSize=13;verticalAlign=top;align=center;spacingTop=6;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="40" width="480" height="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="UC01&#xa;Rejestracja konta&#xa;[username, email, hasło]" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="108.5" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="UC02&#xa;Logowanie&#xa;[email → JWT]" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="183.5" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="UC03&#xa;Wylogowanie" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="435" y="108.5" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="UC04&#xa;Walidacja JWT" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="435" y="183.5" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="Czat Prywatny (1:1)" style="rounded=1;arcSize=4;fillColor=#E3F2FD;strokeColor=#1565C0;fontStyle=1;fontSize=13;verticalAlign=top;align=center;spacingTop=6;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="440" width="480" height="310" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="UC05&#xa;Wysłanie wiad. prywatnej" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="240" y="510" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="UC06&#xa;Odbiór wiad. (real-time)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="240" y="585" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="UC07&#xa;Historia rozmowy" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="240" y="660" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="UC08&#xa;Sygnał &quot;pisze...&quot;" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="425" y="510" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="UC09&#xa;Potwierdzenie ACK" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="425" y="585" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="«extend»&#xa;[odbiorca online]" style="dashed=1;endArrow=open;endFill=0;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;" parent="1" source="23" target="27" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="Pokoje Grupowe — Uczestnik" style="rounded=1;arcSize=4;fillColor=#E8F5E9;strokeColor=#2E7D32;fontStyle=1;fontSize=13;verticalAlign=top;align=center;spacingTop=6;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="730" y="41" width="480" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="UC10&#xa;Lista pokojów" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="745" y="71" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="UC11&#xa;Dołączenie do pokoju" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="755" y="143" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="UC12&#xa;Wysłanie wiad. do pokoju" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="745" y="221" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="UC13&#xa;Odbiór wiad. (broadcast)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="71" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="UC14&#xa;Historia pokoju" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="146" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="UC15&#xa;Opuszczenie pokoju" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="930" y="221" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="Zarządzanie Pokojem — Właściciel" style="rounded=1;arcSize=4;fillColor=#FFF3E0;strokeColor=#E65100;fontStyle=1;fontSize=13;verticalAlign=top;align=center;spacingTop=6;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="750" y="456" width="480" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="UC16&#xa;Utworzenie pokoju [nazwa]" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="509" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="UC17&#xa;Dodanie osoby do pokoju" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="608" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="UC18&#xa;Usunięcie osoby z pokoju" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="985" y="509" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="UC19&#xa;Zamknięcie pokoju" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="985" y="608" width="175" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="«extend»&#xa;[nowy pokój]" style="dashed=1;endArrow=open;endFill=0;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;" parent="1" source="31" target="37" edge="1">
+                    <mxGeometry x="-0.0872" y="3" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="843" y="210"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="42" value="«extend»&#xa;[auto-join]" style="dashed=1;endArrow=open;endFill=0;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;" parent="1" source="38" target="31" edge="1">
+                    <mxGeometry x="-0.1335" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="740" y="634"/>
+                            <mxPoint x="740" y="169"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="43" value="Obecność i Kontakty" style="rounded=1;arcSize=4;fillColor=#FFFDE7;strokeColor=#F57F17;fontStyle=1;fontSize=13;verticalAlign=top;align=center;spacingTop=6;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="1290" y="40" width="380" height="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="44" value="UC20&#xa;Lista użytkowników" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="1305" y="70" width="345" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="UC21&#xa;Status online / offline" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="1305" y="145" width="345" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="UC22&#xa;Powiadomienie o zmianie&#xa;statusu (broadcast)" style="ellipse;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#23445D;fontColor=#23445D;" parent="1" vertex="1">
+                    <mxGeometry x="1305" y="340" width="345" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" value="«extend»&#xa;[connect/disconnect]" style="dashed=1;endArrow=open;endFill=0;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;" parent="1" source="46" target="45" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="" style="endArrow=open;endFill=0;strokeColor=#6A1B9A;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="12" target="16" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="49" value="" style="endArrow=open;endFill=0;strokeColor=#1565C0;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="13" target="22" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="" style="endArrow=open;endFill=0;strokeColor=#1565C0;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="13" target="16" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="100" y="165"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="51" value="" style="endArrow=open;endFill=0;strokeColor=#2E7D32;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.063;entryY=0.997;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="13" target="29" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="100" y="390"/>
+                            <mxPoint x="760" y="390"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="52" value="" style="endArrow=open;endFill=0;strokeColor=#F57F17;fontSize=10;labelBackgroundColor=#ffffff;entryX=0;entryY=1;entryDx=0;entryDy=0;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="100" y="590" as="sourcePoint"/>
+                        <mxPoint x="1300" y="290.0000000000001" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="170" y="590"/>
+                            <mxPoint x="170" y="400"/>
+                            <mxPoint x="1300" y="400"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="53" value="" style="endArrow=open;endFill=0;strokeColor=#E65100;fontSize=10;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.061;entryY=0.998;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="14" target="36" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="779" y="800"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="54" value="«include»" style="dashed=1;endArrow=open;endFill=0;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;" parent="1" source="18" target="20" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="«include»" style="dashed=1;endArrow=open;endFill=0;strokeColor=#000000;fontSize=10;labelBackgroundColor=#ffffff;" parent="1" source="23" target="20" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="56" name="Diagram Klas">
+        <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1750" pageHeight="1200" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="57" value="User  «Model»" style="swimlane;startSize=28;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontStyle=1;fontSize=12;rounded=1;arcSize=4;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="20" width="315" height="226" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" value="+ id : Integer  «PK, AUTO»&#xa;+ username : String(64)  «UNIQUE»&#xa;+ email : String(120)  «UNIQUE»&#xa;+ password_hash : String(128)&#xa;+ created_at : DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;" vertex="1" parent="57">
+                    <mxGeometry x="2" y="28" width="311" height="88" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="" style="line;strokeColor=#6C8EBF;fillColor=none;" vertex="1" parent="57">
+                    <mxGeometry x="0" y="116" width="315" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="60" value="+ register(username, email, password) : User&#xa;+ login(email, password) : str  «JWT»&#xa;+ logout() : void&#xa;+ set_password(password) : void&#xa;+ check_password(password) : bool&#xa;+ to_dict(online: bool) : dict" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;fontStyle=2;" vertex="1" parent="57">
+                    <mxGeometry x="2" y="122" width="311" height="104" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" value="Room  «Model»" style="swimlane;startSize=28;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontStyle=1;fontSize=12;rounded=1;arcSize=4;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="357" y="20" width="315" height="242" as="geometry"/>
+                </mxCell>
+                <mxCell id="62" value="+ id : Integer  «PK, AUTO»&#xa;+ name : String(128)&#xa;+ created_by : Integer  «FK: users.id»&#xa;+ created_at : DateTime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;" vertex="1" parent="61">
+                    <mxGeometry x="2" y="28" width="311" height="72" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" value="" style="line;strokeColor=#6C8EBF;fillColor=none;" vertex="1" parent="61">
+                    <mxGeometry x="0" y="100" width="315" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" value="+ create(name, owner_id) : Room&#xa;+ close() : void&#xa;+ add_member(user_id) : RoomMember&#xa;+ remove_member(user_id) : void&#xa;+ get_members() : list[User]&#xa;+ send_message(sender_id, content) : Message&#xa;+ get_history(limit) : list[Message]&#xa;+ to_dict() : dict" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;fontStyle=2;" vertex="1" parent="61">
+                    <mxGeometry x="2" y="106" width="311" height="136" as="geometry"/>
+                </mxCell>
+                <mxCell id="65" value="RoomMember  «Model»" style="swimlane;startSize=28;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontStyle=1;fontSize=12;rounded=1;arcSize=4;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="694" y="20" width="315" height="178" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="+ id : Integer  «PK, AUTO»&#xa;+ room_id : Integer  «FK: rooms.id»&#xa;+ user_id : Integer  «FK: users.id»&#xa;+ joined_at : DateTime&#xa;«UNIQUE(room_id, user_id)»" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;" vertex="1" parent="65">
+                    <mxGeometry x="2" y="28" width="311" height="88" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="" style="line;strokeColor=#6C8EBF;fillColor=none;" vertex="1" parent="65">
+                    <mxGeometry x="0" y="116" width="315" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" value="+ join(room_id, user_id) : RoomMember&#xa;+ leave() : void&#xa;+ is_member(room_id, user_id) : bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;fontStyle=2;" vertex="1" parent="65">
+                    <mxGeometry x="2" y="122" width="311" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="Message  «Model»" style="swimlane;startSize=28;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontStyle=1;fontSize=12;rounded=1;arcSize=4;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="1031" y="20" width="315" height="242" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="+ id : Integer  «PK, AUTO»&#xa;+ sender_id : Integer  «FK: users.id»&#xa;+ recipient_id : Integer  «NULLABLE»&#xa;+ room_id : Integer  «FK: rooms.id, NULLABLE»&#xa;+ content : Text&#xa;+ delivered : Boolean  «default: False»&#xa;+ created_at : DateTime&#xa;# recipient_id XOR room_id" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;" vertex="1" parent="69">
+                    <mxGeometry x="2" y="28" width="311" height="136" as="geometry"/>
+                </mxCell>
+                <mxCell id="71" value="" style="line;strokeColor=#6C8EBF;fillColor=none;" vertex="1" parent="69">
+                    <mxGeometry x="0" y="164" width="315" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="72" value="+ send_private(sender, recipient, content) : Message&#xa;+ send_to_room(sender, room_id, content) : Message&#xa;+ mark_delivered() : void&#xa;+ to_dict() : dict" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;fontStyle=2;" vertex="1" parent="69">
+                    <mxGeometry x="2" y="170" width="311" height="72" as="geometry"/>
+                </mxCell>
+                <mxCell id="73" value="SessionStore  «Singleton»" style="swimlane;startSize=28;fillColor=#D5E8D4;strokeColor=#82B366;fontStyle=1;fontSize=12;rounded=1;arcSize=4;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="306" width="315" height="194" as="geometry"/>
+                </mxCell>
+                <mxCell id="74" value="- _sessions : dict[int, set[str]]&#xa;- _lock : threading.Lock&#xa;# user_id → { socket_id, ... }" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;" vertex="1" parent="73">
+                    <mxGeometry x="2" y="28" width="311" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="75" value="" style="line;strokeColor=#82B366;fillColor=none;" vertex="1" parent="73">
+                    <mxGeometry x="0" y="84" width="315" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="76" value="+ add_session(user_id, socket_id) : void&#xa;+ remove_session(user_id, socket_id) : void&#xa;+ get_socket_ids(user_id) : set[str]&#xa;+ get_user_id_by_socket(sid) : int | None&#xa;+ get_online_user_ids() : set[int]&#xa;+ is_online(user_id) : bool" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;fontStyle=2;" vertex="1" parent="73">
+                    <mxGeometry x="2" y="90" width="311" height="104" as="geometry"/>
+                </mxCell>
+                <mxCell id="77" value="SocketEvents  «Flask-SocketIO»" style="swimlane;startSize=28;fillColor=#D5E8D4;strokeColor=#82B366;fontStyle=1;fontSize=12;rounded=1;arcSize=4;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="357" y="306" width="355" height="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="78" value="- session_store : SessionStore&#xa;── Klient → Serwer ──────────────────" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;" vertex="1" parent="77">
+                    <mxGeometry x="2" y="28" width="351" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="79" value="" style="line;strokeColor=#82B366;fillColor=none;" vertex="1" parent="77">
+                    <mxGeometry x="0" y="68" width="355" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="80" value="+ on_connect(token) : bool&#xa;+ on_disconnect() : void&#xa;+ on_private_message(to_user_id, content) : void&#xa;+ on_room_message(room_id, content) : void&#xa;+ on_join_room(room_id) : void&#xa;+ on_leave_room(room_id) : void&#xa;+ on_typing(to_user_id) : void&#xa;── Serwer → Klient ──────────────────&#xa;emit &quot;message&quot;       {id, sender_id, content}&#xa;emit &quot;room_message&quot;  {id, room_id, sender_id}&#xa;emit &quot;user_status&quot;   {user_id, online: bool}&#xa;emit &quot;ack&quot;           {message_id}&#xa;emit &quot;typing&quot;        {from_user_id}" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;fontStyle=2;" vertex="1" parent="77">
+                    <mxGeometry x="2" y="74" width="351" height="216" as="geometry"/>
+                </mxCell>
+                <mxCell id="81" value="REST Controllers  «Blueprints»" style="swimlane;startSize=28;fillColor=#FFE6CC;strokeColor=#D79B00;fontStyle=1;fontSize=12;rounded=1;arcSize=4;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="734" y="306" width="345" height="338" as="geometry"/>
+                </mxCell>
+                <mxCell id="82" value="AuthController  /api/auth/*&#xa;  POST /register  → 201 | 400 | 409&#xa;  POST /login     → 200 JWT | 401&#xa;  POST /logout    → 200&#xa;UserController  /api/users/*&#xa;  GET /  [JWT]   → [{id, username, online}]&#xa;RoomController  /api/rooms/*&#xa;  GET /           → [Room]&#xa;  POST /          → 201 Room&#xa;  POST /{id}/join [JWT]&#xa;  POST /{id}/invite [JWT][Owner]&#xa;  DELETE /{id}/members/{uid} [Owner]&#xa;  DELETE /{id} [Owner]&#xa;  GET /{id}/messages [JWT]&#xa;MessageController  /api/messages/*&#xa;  GET /{user_id} [JWT] → [Message]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;" vertex="1" parent="81">
+                    <mxGeometry x="2" y="28" width="341" height="264" as="geometry"/>
+                </mxCell>
+                <mxCell id="83" value="" style="line;strokeColor=#D79B00;fillColor=none;" vertex="1" parent="81">
+                    <mxGeometry x="0" y="292" width="345" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="84" value="[JWT] = wymaga Bearer token&#xa;[Owner] = wymaga created_by == current_user" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;fontStyle=2;" vertex="1" parent="81">
+                    <mxGeometry x="2" y="298" width="341" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="85" value="AuthContext  «React»" style="swimlane;startSize=28;fillColor=#E8D5F5;strokeColor=#9673A6;fontStyle=1;fontSize=12;rounded=1;arcSize=4;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="1101" y="306" width="315" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="86" value="+ token : string | null&#xa;+ user : {id, username} | null" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;" vertex="1" parent="85">
+                    <mxGeometry x="2" y="28" width="311" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="87" value="" style="line;strokeColor=#9673A6;fillColor=none;" vertex="1" parent="85">
+                    <mxGeometry x="0" y="68" width="315" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="88" value="+ login(email, password) : Promise&#xa;+ logout() : void&#xa;+ register(username, email, pwd) : Promise" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;fontStyle=2;" vertex="1" parent="85">
+                    <mxGeometry x="2" y="74" width="311" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="89" value="SocketContext  «React»" style="swimlane;startSize=28;fillColor=#E8D5F5;strokeColor=#9673A6;fontStyle=1;fontSize=12;rounded=1;arcSize=4;align=center;" vertex="1" parent="1">
+                    <mxGeometry x="1101" y="458" width="315" height="146" as="geometry"/>
+                </mxCell>
+                <mxCell id="90" value="+ socket : Socket | null&#xa;+ connected : boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;" vertex="1" parent="89">
+                    <mxGeometry x="2" y="28" width="311" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="91" value="" style="line;strokeColor=#9673A6;fillColor=none;" vertex="1" parent="89">
+                    <mxGeometry x="0" y="68" width="315" height="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="92" value="+ connect(token) : void&#xa;+ disconnect() : void&#xa;+ emit(event, data) : void&#xa;+ on(event, handler) : void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=6;overflow=hidden;rotatable=0;fontSize=11;fontStyle=2;" vertex="1" parent="89">
+                    <mxGeometry x="2" y="74" width="311" height="72" as="geometry"/>
+                </mxCell>
+                <mxCell id="93" value="1 nadaje / odbiera 0..*" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#23445D;" edge="1" source="57" target="69" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="94" value="1 należy do 0..*" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#23445D;" edge="1" source="57" target="65" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="95" value="1 tworzy 0..*" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#23445D;" edge="1" source="57" target="61" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="96" value="1 posiada 0..*" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#23445D;" edge="1" source="61" target="65" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" value="1 zawiera 0..*" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#23445D;" edge="1" source="61" target="69" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="98" value="uses" style="endArrow=open;endFill=0;dashed=1;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#555555;" edge="1" source="73" target="77" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="99" value="queries" style="endArrow=open;endFill=0;dashed=1;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#555555;" edge="1" source="81" target="57" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="100" value="validates" style="endArrow=open;endFill=0;dashed=1;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#555555;" edge="1" source="81" target="65" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="101" value="persists" style="endArrow=open;endFill=0;dashed=1;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#555555;" edge="1" source="77" target="69" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="102" value="reads token" style="endArrow=open;endFill=0;dashed=1;fontSize=10;labelBackgroundColor=#ffffff;strokeColor=#555555;" edge="1" source="89" target="85" parent="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

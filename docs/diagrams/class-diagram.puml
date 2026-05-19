@@ -1,4 +1,4 @@
-@startuml Komunikator_SR - Class Diagram
+@startuml
 
 !theme plain
 skinparam backgroundColor #FAFAFA
@@ -9,6 +9,9 @@ skinparam classHeaderFontColor #FFFFFF
 skinparam packageBackgroundColor #F2F3F4
 skinparam packageBorderColor #85929E
 skinparam arrowColor #2C3E50
+skinparam linetype ortho
+
+left to right direction
 
 title Komunikator SR — Diagram Klas (Dane i Funkcje)
 

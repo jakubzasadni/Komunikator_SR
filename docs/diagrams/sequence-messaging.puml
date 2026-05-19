@@ -1,4 +1,4 @@
-@startuml Komunikator_SR - Sequence: Messaging
+@startuml
 
 !theme plain
 skinparam backgroundColor #FAFAFA
