@@ -1,5 +1,8 @@
 # Deployment na Azure VM (docker-compose)
 
+**Aplikacja produkcyjna:** http://20.56.129.98/
+
+
 ## 1. Utwórz maszynę wirtualną w Azure
 
 1. Zaloguj się do [portal.azure.com](https://portal.azure.com)

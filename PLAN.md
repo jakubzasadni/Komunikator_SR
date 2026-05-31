@@ -155,6 +155,25 @@
 
 ---
 
+## Iteracja 7.5 — Deployment na Azure ✅
+**Termin:** Zrealizowane przed zajęciami 8
+
+### Cele
+- [x] Produkcyjny `Dockerfile.prod` (multi-stage: `npm run build` → nginx)
+- [x] `nginx.conf` — proxy `/api/` i `/socket.io/` do backendu, SPA fallback
+- [x] `docker-compose.prod.yml` — port 80, zmienne środowiskowe z `.env.prod`
+- [x] Deployment na Azure VM (Ubuntu 24.04, B1s, West Europe)
+- [x] Aplikacja dostępna publicznie: **http://20.56.129.98/**
+
+### Zrealizowane pliki
+- `docker-compose.prod.yml`
+- `frontend/Dockerfile.prod`
+- `frontend/nginx.conf`
+- `.env.prod.example`
+- `DEPLOY.md` — instrukcja krok po kroku
+
+---
+
 ## Iteracja 8 — Prezentacja końcowa
 **Termin:** Ostatnie zajęcia
 
