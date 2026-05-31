@@ -64,3 +64,67 @@ def room_messages(room_id):
         .all()
     )
     return jsonify([m.to_dict() for m in reversed(messages)]), 200
+
+
+@rooms_bp.get("/available")
+@jwt_required()
+def available_rooms():
+    user_id = int(get_jwt_identity())
+    member_ids = {m.room_id for m in RoomMember.query.filter_by(user_id=user_id).all()}
+    rooms = Room.query.filter(Room.id.notin_(member_ids)).all() if member_ids else Room.query.all()
+    return jsonify([r.to_dict() for r in rooms]), 200
+
+
+@rooms_bp.post("/<int:room_id>/invite")
+@jwt_required()
+def invite_user(room_id):
+    owner_id = int(get_jwt_identity())
+    room = Room.query.get(room_id)
+    if not room:
+        return jsonify({"error": "Room not found"}), 404
+    if room.created_by != owner_id:
+        return jsonify({"error": "Forbidden"}), 403
+    data = request.get_json(silent=True) or {}
+    target_id = data.get("user_id")
+    if not target_id:
+        return jsonify({"error": "Missing user_id"}), 400
+    if not RoomMember.query.filter_by(room_id=room_id, user_id=target_id).first():
+        db.session.add(RoomMember(room_id=room_id, user_id=int(target_id)))
+        db.session.commit()
+        from app import socketio
+        from app.sockets.session_store import get_socket_ids
+        for sid in get_socket_ids(int(target_id)):
+            socketio.emit("room_invite", room.to_dict(), to=sid)
+    return jsonify(room.to_dict()), 200
+
+
+@rooms_bp.delete("/<int:room_id>/members/<int:uid>")
+@jwt_required()
+def remove_member(room_id, uid):
+    owner_id = int(get_jwt_identity())
+    room = Room.query.get(room_id)
+    if not room:
+        return jsonify({"error": "Room not found"}), 404
+    if room.created_by != owner_id:
+        return jsonify({"error": "Forbidden"}), 403
+    member = RoomMember.query.filter_by(room_id=room_id, user_id=uid).first()
+    if member:
+        db.session.delete(member)
+        db.session.commit()
+    return jsonify({"message": "Removed"}), 200
+
+
+@rooms_bp.delete("/<int:room_id>")
+@jwt_required()
+def delete_room(room_id):
+    owner_id = int(get_jwt_identity())
+    room = Room.query.get(room_id)
+    if not room:
+        return jsonify({"error": "Room not found"}), 404
+    if room.created_by != owner_id:
+        return jsonify({"error": "Forbidden"}), 403
+    RoomMember.query.filter_by(room_id=room_id).delete()
+    Message.query.filter_by(room_id=room_id).delete()
+    db.session.delete(room)
+    db.session.commit()
+    return jsonify({"message": "Deleted"}), 200

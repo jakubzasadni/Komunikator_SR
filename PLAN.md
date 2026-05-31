@@ -79,36 +79,61 @@
 
 ---
 
-## Iteracja 5 — Pokoje grupowe (PU-02)
+## Iteracja 5 — Pokoje grupowe (PU-02) ✅
 **Termin:** Zajęcia 5
 
 ### Cele
-- [ ] Endpointy REST: tworzenie pokoju, lista pokojów, dołączanie
-- [ ] Zdarzenia Socket.IO: `join_room`, `leave_room`, `room_message`
-- [ ] Broadcast wiadomości do wszystkich uczestników pokoju
-- [ ] Historia wiadomości pokoju (pobierana przy dołączeniu)
-- [ ] Widok listy pokojów i okno czatu grupowego w React
+- [x] Endpointy REST: tworzenie pokoju, lista pokojów, dołączanie (`GET/POST /api/rooms/`, `POST /api/rooms/<id>/join`)
+- [x] Endpoint `GET /api/rooms/available` — pokoje do których użytkownik nie należy
+- [x] Endpoint `POST /api/rooms/<id>/invite` — zaproszenie usera przez właściciela
+- [x] Endpoint `DELETE /api/rooms/<id>/members/<uid>` — usunięcie członka (owner)
+- [x] Endpoint `DELETE /api/rooms/<id>` — usunięcie pokoju (owner)
+- [x] Zdarzenia Socket.IO: `join_room`, `leave_room`, `room_message`
+- [x] Auto-join pokoi przy połączeniu WS (`on_connect` iteruje po `RoomMember`)
+- [x] Broadcast wiadomości do wszystkich uczestników pokoju (`include_self=True`)
+- [x] Historia wiadomości pokoju (pobierana przy wyborze pokoju)
+- [x] `sender_username` w `Message.to_dict()` — widoczny w czacie grupowym
+- [x] Widok listy pokojów w sidebarze React z sekcją "Pokoje"
+- [x] Inline form tworzenia pokoju (przycisk "+" przy nagłówku Pokoje)
+- [x] Modal "Przeglądaj pokoje" z przyciskiem Dołącz
+- [x] Okno czatu grupowego — bąbelki z username nadawcy
+- [x] Modal "Zarządzaj" dla właściciela (zapraszanie, usunięcie pokoju)
+- [x] `room_invite` event — zaproszony user widzi pokój w sidebarze natychmiast
 
 ### Kryteria akceptacji
-- Wiadomość wysłana do pokoju dociera do wszystkich aktywnych uczestników
-- Nowy uczestnik po dołączeniu widzi historię wiadomości
-- Użytkownik może być w wielu pokojach jednocześnie
+- Wiadomość wysłana do pokoju dociera do wszystkich aktywnych uczestników ✅
+- Nowy uczestnik po dołączeniu widzi historię wiadomości ✅
+- Użytkownik może być w wielu pokojach jednocześnie ✅
+
+### Zrealizowane pliki
+- `backend/app/routes/rooms.py` — nowe endpointy (available, invite, remove member, delete)
+- `backend/app/sockets/events.py` — auto-join pokoi przy `on_connect`
+- `backend/app/models/message.py` — `sender_username` w `to_dict()`
+- `frontend/src/components/Chat/ChatPage.jsx` — pełna obsługa pokojów grupowych
 
 ---
 
-## Iteracja 6 — Status online, lista kontaktów i UI
+## Iteracja 6 — Status online, lista kontaktów i UI ✅
 **Termin:** Zajęcia 6
 
 ### Cele
-- [ ] Status online/offline użytkowników (aktualizowany przez Socket.IO)
-- [ ] Lista kontaktów z widocznym statusem w czasie rzeczywistym
-- [ ] Powiadomienia o nowych wiadomościach
-- [ ] Dopracowanie UI (responsywność, UX)
-- [ ] Obsługa błędów i edge-case'ów (rozłączenie, timeout)
+- [x] Status online/offline użytkowników (aktualizowany przez Socket.IO `user_status`)
+- [x] Lista kontaktów z widocznym statusem w czasie rzeczywistym (zielona/szara kropka)
+- [x] Nieodczytane odznaki (badge) na kontaktach i pokojach w sidebarze
+- [x] Kasowanie badge przy wybraniu czatu
+- [x] Obsługa `room_invite` — pokój pojawia się w sidebarze bez przeładowania
+- [x] Reconnect: `reconnectionAttempts: 5`, `reconnectionDelay: 1000ms` w SocketContext
+- [x] Wskaźnik stanu połączenia w nagłówku (kropka online/offline przy nazwie usera)
+- [x] `activeChatRef` — eliminacja stale closure w handlerach socketa
+- [x] Dopracowanie UI: modale, sidebar sections, room icon "#", badge
 
 ### Kryteria akceptacji
-- Status zmienia się natychmiast po connect/disconnect
-- Lista kontaktów odświeża się bez przeładowania strony
+- Status zmienia się natychmiast po connect/disconnect ✅
+- Lista kontaktów odświeża się bez przeładowania strony ✅
+
+### Zrealizowane pliki
+- `frontend/src/components/Chat/ChatPage.jsx` — unread badges, status dots, reconnect handling
+- `frontend/src/index.css` — nowe klasy: sidebar sections, badge, modal, room icon, btn-sm, btn-danger
 
 ---
 

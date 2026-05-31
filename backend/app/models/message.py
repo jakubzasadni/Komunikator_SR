@@ -18,6 +18,7 @@ class Message(db.Model):
         return {
             "id": self.id,
             "sender_id": self.sender_id,
+            "sender_username": self.sender.username if self.sender else None,
             "recipient_id": self.recipient_id,
             "room_id": self.room_id,
             "content": self.content,

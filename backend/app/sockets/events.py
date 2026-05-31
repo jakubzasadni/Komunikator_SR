@@ -30,6 +30,11 @@ def on_connect():
     add_session(user_id, request.sid)
     emit("user_status", {"user_id": user_id, "online": True}, broadcast=True)
 
+    from app.models.room import RoomMember
+    memberships = RoomMember.query.filter_by(user_id=user_id).all()
+    for m in memberships:
+        join_room(str(m.room_id))
+
 
 @socketio.on("disconnect")
 def on_disconnect():
