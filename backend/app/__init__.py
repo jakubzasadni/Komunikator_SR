@@ -49,4 +49,31 @@ def create_app():
 
     from app.sockets import events  # noqa: F401 — registers socket handlers
 
+    @app.cli.command("seed-admin")
+    def seed_admin():
+        from app.models.user import User
+        admin_username = os.getenv("ADMIN_USERNAME", "admin")
+        admin_email = os.getenv("ADMIN_EMAIL", "admin@komunikator.local")
+        admin_password = os.getenv("ADMIN_PASSWORD")
+
+        if not admin_password:
+            print("[seed-admin] ADMIN_PASSWORD not set — skipping")
+            return
+
+        existing = User.query.filter_by(email=admin_email).first()
+        if existing:
+            if not existing.is_admin:
+                existing.is_admin = True
+                db.session.commit()
+                print(f"[seed-admin] {admin_username} already exists — promoted to admin")
+            else:
+                print(f"[seed-admin] Admin {admin_username} already exists — nothing to do")
+            return
+
+        hashed = bcrypt.generate_password_hash(admin_password).decode("utf-8")
+        user = User(username=admin_username, email=admin_email, password_hash=hashed, is_admin=True)
+        db.session.add(user)
+        db.session.commit()
+        print(f"[seed-admin] Admin user '{admin_username}' created ({admin_email})")
+
     return app
