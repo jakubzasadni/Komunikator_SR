@@ -20,10 +20,23 @@ export default function ChatPage() {
   const [showBrowse, setShowBrowse] = useState(false);
   const [manageModal, setManageModal] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
+  const [toasts, setToasts] = useState([]);
 
   const messagesEndRef = useRef(null);
   const typingTimerRef = useRef(null);
   const activeChatRef = useRef(null);
+
+  // Update document title with total unread count
+  useEffect(() => {
+    const total = Object.values(unread).reduce((s, v) => s + v, 0);
+    document.title = total > 0 ? `(${total}) Komunikator` : "Komunikator";
+  }, [unread]);
+
+  function addToast(text) {
+    const id = Date.now();
+    setToasts((prev) => [...prev, { id, text }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
+  }
 
   // Keep ref in sync with state to avoid stale closures in socket handlers
   useEffect(() => {
@@ -70,13 +83,14 @@ export default function ChatPage() {
       if (isActive) {
         setMessages((prev) => [...prev, msg]);
       } else {
-        // Increment unread badge for the sender contact
         const senderId = msg.sender_id;
         if (senderId !== user.id) {
           setUnread((prev) => ({
             ...prev,
             [`c_${senderId}`]: (prev[`c_${senderId}`] ?? 0) + 1,
           }));
+          const senderName = msg.sender_username ?? `Użytkownik #${senderId}`;
+          addToast(`💬 ${senderName}: ${msg.content.slice(0, 60)}`);
         }
       }
     };
@@ -88,10 +102,13 @@ export default function ChatPage() {
       if (isActive) {
         setMessages((prev) => [...prev, msg]);
       } else {
-        setUnread((prev) => ({
-          ...prev,
-          [`r_${msg.room_id}`]: (prev[`r_${msg.room_id}`] ?? 0) + 1,
-        }));
+        if (msg.sender_id !== user.id) {
+          setUnread((prev) => ({
+            ...prev,
+            [`r_${msg.room_id}`]: (prev[`r_${msg.room_id}`] ?? 0) + 1,
+          }));
+          addToast(`💬 #${msg.room_id} — ${msg.sender_username ?? "ktoś"}: ${msg.content.slice(0, 50)}`);
+        }
       }
     };
 
@@ -469,6 +486,15 @@ export default function ChatPage() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Toast notifications */}
+      {toasts.length > 0 && (
+        <div className="toast-container">
+          {toasts.map((t) => (
+            <div key={t.id} className="toast">{t.text}</div>
+          ))}
         </div>
       )}
     </div>

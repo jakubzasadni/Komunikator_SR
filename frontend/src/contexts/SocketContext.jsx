@@ -14,8 +14,9 @@ export function SocketProvider({ children }) {
 
     const s = io("/", {
       query: { token },
-      reconnectionAttempts: 5,
+      reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
+      reconnectionDelayMax: 10000,
     });
 
     s.on("connect", () => setConnected(true));
