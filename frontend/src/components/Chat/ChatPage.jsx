@@ -224,6 +224,7 @@ export default function ChatPage() {
 
   async function inviteUser(userId) {
     await api.post(`/rooms/${activeChat.data.id}/invite`, { user_id: userId });
+    setAllUsers((prev) => prev.map((u) => u.id === userId ? { ...u, invited: true } : u));
   }
 
   async function deleteRoom() {
@@ -470,10 +471,12 @@ export default function ChatPage() {
                         {u.username}
                       </span>
                       <button
-                        className="btn btn-primary btn-sm"
-                        onClick={() => inviteUser(u.id)}
+                        className="btn btn-sm"
+                        style={u.invited ? { background: "#48bb78", color: "#fff" } : { background: "var(--color-primary)", color: "#fff" }}
+                        onClick={() => !u.invited && inviteUser(u.id)}
+                        disabled={u.invited}
                       >
-                        Zaproś
+                        {u.invited ? "Wysłano ✓" : "Zaproś"}
                       </button>
                     </li>
                   ))}
