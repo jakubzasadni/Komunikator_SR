@@ -25,8 +25,10 @@ def register():
     if User.query.filter_by(username=data["username"]).first():
         return jsonify({"error": "Username already taken"}), 409
 
+    is_first = User.query.count() == 0
     hashed = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
     user = User(username=data["username"], email=data["email"], password_hash=hashed)
+    user.is_admin = is_first
     db.session.add(user)
     db.session.commit()
     return jsonify({"message": "User created", "user_id": user.id}), 201

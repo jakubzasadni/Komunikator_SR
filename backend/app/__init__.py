@@ -39,11 +39,13 @@ def create_app():
     from app.routes.users import users_bp
     from app.routes.rooms import rooms_bp
     from app.routes.messages import messages_bp
+    from app.routes.admin import admin_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(users_bp, url_prefix="/api/users")
     app.register_blueprint(rooms_bp, url_prefix="/api/rooms")
     app.register_blueprint(messages_bp, url_prefix="/api/messages")
+    app.register_blueprint(admin_bp, url_prefix="/api/admin")
 
     from app.sockets import events  # noqa: F401 — registers socket handlers
 

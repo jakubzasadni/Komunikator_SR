@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.room import Room, RoomMember
 from app.models.message import Message
+from app.models.user import User
 
 rooms_bp = Blueprint("rooms", __name__)
 
@@ -73,6 +74,26 @@ def available_rooms():
     member_ids = {m.room_id for m in RoomMember.query.filter_by(user_id=user_id).all()}
     rooms = Room.query.filter(Room.id.notin_(member_ids)).all() if member_ids else Room.query.all()
     return jsonify([r.to_dict() for r in rooms]), 200
+
+
+@rooms_bp.get("/all")
+@jwt_required()
+def all_rooms():
+    user_id = int(get_jwt_identity())
+    member_ids = {m.room_id for m in RoomMember.query.filter_by(user_id=user_id).all()}
+    result = []
+    for room in Room.query.order_by(Room.created_at).all():
+        members = (
+            db.session.query(User)
+            .join(RoomMember, RoomMember.user_id == User.id)
+            .filter(RoomMember.room_id == room.id)
+            .all()
+        )
+        data = room.to_dict()
+        data["is_member"] = room.id in member_ids
+        data["members"] = [{"id": u.id, "username": u.username} for u in members]
+        result.append(data)
+    return jsonify(result), 200
 
 
 @rooms_bp.post("/<int:room_id>/invite")

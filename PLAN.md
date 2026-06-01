@@ -132,8 +132,44 @@
 - Lista kontaktów odświeża się bez przeładowania strony ✅
 
 ### Zrealizowane pliki
-- `frontend/src/components/Chat/ChatPage.jsx` — unread badges, status dots, reconnect handling
-- `frontend/src/index.css` — nowe klasy: sidebar sections, badge, modal, room icon, btn-sm, btn-danger
+- `frontend/src/components/Chat/ChatPage.jsx` — unread badges, status dots, reconnect handling, toast notifications, document title
+- `frontend/src/contexts/SocketContext.jsx` — reconnectionAttempts: Infinity
+- `frontend/src/index.css` — nowe klasy: sidebar sections, badge, modal, room icon, btn-sm, btn-danger, toast
+
+---
+
+## Iteracja 6.5 — Rola Admina ✅
+
+### Cele
+- [x] Kolumna `is_admin` w tabeli `users` (migracja `a1b2c3d4e5f6`)
+- [x] Pierwszy zarejestrowany użytkownik automatycznie dostaje rolę admina
+- [x] Dekorator `@admin_required` — ochrona endpointów admina (JWT + sprawdzenie is_admin)
+- [x] `GET /api/admin/users` — lista wszystkich użytkowników
+- [x] `DELETE /api/admin/users/<uid>` — usunięcie użytkownika (kaskadowo wiadomości i członkostwa)
+- [x] `POST /api/admin/users/<uid>/toggle-admin` — nadanie/odebranie roli admina
+- [x] `GET /api/admin/rooms` — lista wszystkich pokojów z liczbą członków i właścicielem
+- [x] `DELETE /api/admin/rooms/<rid>` — usunięcie dowolnego pokoju
+- [x] Panel admina w React (`/admin`) — zakładki: Użytkownicy / Pokoje
+- [x] Przycisk "Panel admina" w nagłówku — widoczny tylko dla admina
+- [x] Route `/admin` chroniona: dostępna tylko gdy `user.is_admin === true`
+
+### Jak działa admin
+- Pierwsza osoba rejestrująca się w systemie zostaje adminem automatycznie
+- Admin widzi przycisk "Panel admina" w nagłówku czatu
+- Admin może nadawać/odbierać rolę admina innym użytkownikom
+- Admin nie może usunąć własnego konta ani zmienić własnej roli
+- Brak osobnego hasła — admin loguje się tak samo jak każdy użytkownik
+
+### Zrealizowane pliki
+- `backend/app/models/user.py` — kolumna `is_admin`, zaktualizowane `to_dict()`
+- `backend/app/routes/admin.py` — nowy blueprint z endpointami admina
+- `backend/app/routes/auth.py` — pierwszy user = admin
+- `backend/app/__init__.py` — rejestracja `admin_bp`
+- `backend/migrations/versions/a1b2c3d4e5f6_add_is_admin.py` — migracja
+- `frontend/src/components/Admin/AdminPage.jsx` — panel admina
+- `frontend/src/App.jsx` — route `/admin`
+- `frontend/src/components/Chat/ChatPage.jsx` — przycisk "Panel admina"
+- `frontend/src/index.css` — style tabeli i badge ról
 
 ---
 

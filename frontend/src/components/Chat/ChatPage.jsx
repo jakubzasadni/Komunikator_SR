@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSocket } from "../../contexts/SocketContext";
+import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
 export default function ChatPage() {
   const { user, logout } = useAuth();
   const { socket, connected } = useSocket();
+  const navigate = useNavigate();
 
   const [contacts, setContacts] = useState([]);
   const [rooms, setRooms] = useState([]);
@@ -201,7 +203,7 @@ export default function ChatPage() {
   }
 
   async function openBrowse() {
-    const res = await api.get("/rooms/available");
+    const res = await api.get("/rooms/all");
     setAvailableRooms(res.data);
     setShowBrowse(true);
   }
@@ -212,6 +214,7 @@ export default function ChatPage() {
       if (prev.find((r) => r.id === room.id)) return prev;
       return [...prev, room];
     });
+    setAvailableRooms((prev) => prev.map((r) => r.id === room.id ? { ...r, is_member: true } : r));
     setAvailableRooms((prev) => prev.filter((r) => r.id !== room.id));
     if (socket) socket.emit("join_room", { room_id: room.id });
   }
@@ -251,6 +254,11 @@ export default function ChatPage() {
           <span>
             Zalogowany jako <strong>{user?.username}</strong>
           </span>
+          {user?.is_admin && (
+            <button className="btn btn-ghost" onClick={() => navigate("/admin")}>
+              Panel admina
+            </button>
+          )}
           <button className="btn btn-ghost" onClick={logout}>
             Wyloguj
           </button>
@@ -426,22 +434,28 @@ export default function ChatPage() {
         <div className="modal-overlay" onClick={() => setShowBrowse(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <strong>Dostępne pokoje</strong>
+              <strong>Wszystkie pokoje</strong>
               <button className="btn-icon" onClick={() => setShowBrowse(false)}>✕</button>
             </div>
             {availableRooms.length === 0 ? (
-              <div className="modal-empty">Brak dostępnych pokojów</div>
+              <div className="modal-empty">Brak pokojów w systemie</div>
             ) : (
-              <ul className="modal-list">
+              <ul className="modal-list" style={{ overflowY: "auto", flex: 1 }}>
                 {availableRooms.map((r) => (
-                  <li key={r.id} className="modal-list-item">
-                    <span><span className="room-icon">#</span> {r.name}</span>
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => joinRoom(r)}
-                    >
-                      Dołącz
-                    </button>
+                  <li key={r.id} style={{ borderBottom: "1px solid var(--color-border)", padding: "10px 20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span><span className="room-icon">#</span> <strong>{r.name}</strong></span>
+                      {r.is_member ? (
+                        <span style={{ fontSize: "0.8rem", color: "#48bb78", fontWeight: 600 }}>✓ Jesteś członkiem</span>
+                      ) : (
+                        <button className="btn btn-primary btn-sm" onClick={() => { joinRoom(r); setShowBrowse(false); }}>
+                          Dołącz
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ fontSize: "0.78rem", color: "var(--color-muted)" }}>
+                      Członkowie: {r.members?.map((m) => m.username).join(", ") || "—"}
+                    </div>
                   </li>
                 ))}
               </ul>
